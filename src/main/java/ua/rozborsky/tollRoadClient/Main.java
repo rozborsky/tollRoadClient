@@ -2,7 +2,6 @@ package ua.rozborsky.tollRoadClient;
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ua.rozborsky.tollRoadClient.classes.Window;
 import ua.rozborsky.tollRoadClient.interfaces.View;
 
 

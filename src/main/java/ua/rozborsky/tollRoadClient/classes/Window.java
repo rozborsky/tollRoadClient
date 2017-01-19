@@ -42,16 +42,44 @@ public class Window implements View {
         panel.setLayout(new BorderLayout());
         panel.setOpaque(true);
         panel.setBackground(new Color(145,45,45));
-        panel.add(image());
 
+        panel.add(image(), BorderLayout.WEST);
+        panel.add(titlePanel(), BorderLayout.EAST);
+        panel.add(textField(), BorderLayout.SOUTH);
         frame.add(panel);
     }
 
-    private Component image() {
+    private JLabel image() {
         File logo = new File("src\\main\\resources\\image\\5.png");
         String path = logo.getAbsolutePath();
         JLabel label = new JLabel(new ImageIcon(path));
 
         return label;
+    }
+
+    private JPanel titlePanel() {
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(145,45,45));
+        panel.setLayout(new BorderLayout());
+
+        JLabel title = new JLabel("tollroad");
+        title.setFont(new Font("Courier New", Font.BOLD, 220));
+        title.setForeground(Color.WHITE);
+        panel.add(title, BorderLayout.NORTH);
+
+        return panel;
+    }
+
+    private JPanel textField() {
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(145,45,45));
+        panel.setLayout(new BorderLayout());
+
+        JTextField input = new JTextField(10);
+        input.setFont(new Font("Courier New", Font.BOLD, 200));
+        input.setSize(new Dimension(1000, 100));
+        panel.add(input, BorderLayout.EAST);
+
+        return panel;
     }
 }
