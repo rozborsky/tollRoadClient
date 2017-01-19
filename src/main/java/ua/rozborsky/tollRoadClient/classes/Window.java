@@ -5,6 +5,9 @@ import ua.rozborsky.tollRoadClient.interfaces.View;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 
@@ -75,12 +78,25 @@ public class Window implements View {
         panel.setBackground(new Color(145,45,45));
         panel.setLayout(new BorderLayout());
 
-        JTextField input = new JTextField(10);
+        final JTextField input = new JTextField(10);
         input.setFont(new Font("Courier New", Font.BOLD, 200));
-        input.setSize(new Dimension(1000, 100));
         input.setDocument(new JTextFieldLimit());
+        input.addActionListener(inputListener(input));
         panel.add(input, BorderLayout.EAST);
 
         return panel;
+    }
+
+    private Action inputListener(final JTextField input) {
+        Action action = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.out.println(input.getText());
+                input.setText("");
+            }
+        };
+
+        return action;
     }
 }
