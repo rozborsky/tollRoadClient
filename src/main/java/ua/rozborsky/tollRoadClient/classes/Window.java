@@ -78,6 +78,7 @@ public class Window implements View {
         JTextField input = new JTextField(10);
         input.setFont(new Font("Courier New", Font.BOLD, 200));
         input.setSize(new Dimension(1000, 100));
+        input.setDocument(new JTextFieldLimit());
         panel.add(input, BorderLayout.EAST);
 
         return panel;
