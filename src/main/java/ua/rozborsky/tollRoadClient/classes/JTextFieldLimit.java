@@ -10,7 +10,7 @@ import javax.swing.text.AttributeSet;
 public class JTextFieldLimit extends PlainDocument {
     private int limit = 10;
 
-    public void insertString( int offset, String  str, AttributeSet attr ) throws BadLocationException {
+    public void insertString(int offset, String  str, AttributeSet attr ) throws BadLocationException {
         if (str == null) return;
 
         if ((getLength() + str.length()) <= limit) {
