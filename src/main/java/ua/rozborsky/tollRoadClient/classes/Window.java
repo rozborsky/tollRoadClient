@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.TimerTask;
 import java.util.Timer;
 
 
@@ -165,7 +164,7 @@ public class Window implements View {
 
                 input.setText("");
                 Timer timer = new Timer();
-                timer.schedule(new RemindTask(layout, dialog), delay * 1000);
+                timer.schedule(new UpdateInput(layout, dialog), delay * 1000);
             }
         };
 
