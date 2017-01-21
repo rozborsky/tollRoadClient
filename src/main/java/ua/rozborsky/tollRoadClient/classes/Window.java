@@ -17,6 +17,7 @@ import java.util.Timer;
 public class Window implements View {
     private JPanel dialog;
     private Font FONT = new Font("Courier New", Font.BOLD, 200);
+    private Font ERROR_FONT = new Font("Courier New", Font.BOLD, 100);
     private Color color = new Color(145,45,45);
     private int delay = 2;
 
@@ -45,14 +46,38 @@ public class Window implements View {
 
     private void setComponents(JFrame frame) {
         JPanel panel = new JPanel();
+        panel.setLayout(new CardLayout());
+        panel.add(normalWork(), "normalWork");
+        panel.add(error(), "error");
+
+        CardLayout layout = (CardLayout)(panel.getLayout());
+        layout.show(panel, "error");
+
+        frame.add(panel);
+    }
+
+    private JPanel normalWork() {
+        JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.setOpaque(true);
         panel.setBackground(color);
 
         panel.add(image(), BorderLayout.WEST);
         panel.add(titlePanel(), BorderLayout.EAST);
         panel.add(dialogPanel(), BorderLayout.SOUTH);
-        frame.add(panel);
+
+        return panel;
+    }
+
+    private JPanel error() {
+        JPanel panel = new JPanel();
+        panel.setBackground(color);
+        JLabel error = new JLabel("<html><div style='text-align: center;'>Sorry, service not available.<br/>" +
+                "Have a nice trip</div></html>");
+        error.setFont(ERROR_FONT);
+        error.setForeground(Color.WHITE);
+        panel.add(error);
+
+        return panel;
     }
 
     private JLabel image() {
