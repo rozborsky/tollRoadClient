@@ -1,5 +1,7 @@
 package ua.rozborsky.tollRoadClient.classes;
 
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import ua.rozborsky.tollRoadClient.interfaces.View;
 
@@ -7,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.Timer;
 
 
@@ -20,6 +23,7 @@ public class Window implements View {
     private Font ERROR_FONT = new Font("Courier New", Font.BOLD, 100);
     private Color color = new Color(145,45,45);
     private int delay = 2;
+    SocketManager socketManager;
 
     @Override
     public void create() {
@@ -45,20 +49,27 @@ public class Window implements View {
     }
 
     private void setComponents(JFrame frame) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new CardLayout());
+        JPanel panel = new JPanel(new CardLayout());
         panel.add(normalWork(), "normalWork");
         panel.add(error(), "error");
 
         CardLayout layout = (CardLayout)(panel.getLayout());
-        layout.show(panel, "error");
+
+        ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("spring/applicationConfig.xml");
+
+        socketManager = (SocketManager) context.getBean("socketManager");
+
+        if (socketManager.isConnect()){
+            layout.show(panel, "normalWork");
+        } else{
+            layout.show(panel, "error");
+        }
 
         frame.add(panel);
     }
 
     private JPanel normalWork() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(color);
 
         panel.add(image(), BorderLayout.WEST);
@@ -69,8 +80,9 @@ public class Window implements View {
     }
 
     private JPanel error() {
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(color);
+
         JLabel error = new JLabel("<html><div style='text-align: center;'>Sorry, service not available.<br/>" +
                 "Have a nice trip</div></html>");
         error.setFont(ERROR_FONT);
@@ -89,9 +101,8 @@ public class Window implements View {
     }
 
     private JPanel titlePanel() {
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(color);
-        panel.setLayout(new BorderLayout());
 
         JLabel title = new JLabel("tollroad");
         title.setFont(FONT);
@@ -102,9 +113,8 @@ public class Window implements View {
     }
 
     private JPanel dialogPanel() {
-        dialog = new JPanel();
+        dialog = new JPanel(new CardLayout());
         dialog.setBackground(color);
-        dialog.setLayout(new CardLayout());
 
         dialog.add(inputPanel(), "input");
         dialog.add(notValidId(), "notValidId");
@@ -118,12 +128,11 @@ public class Window implements View {
     }
 
     private JPanel inputPanel() {
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(color);
-        panel.setLayout(new BorderLayout());
 
         JTextField input = new JTextField(10);
-        input.setFont(new Font("Courier New", Font.BOLD, 200));
+        input.setFont(FONT);
         input.setDocument(new JTextFieldLimit());
         input.addActionListener(inputListener(input));
         panel.add(input, BorderLayout.EAST);
@@ -176,7 +185,6 @@ public class Window implements View {
 
                 try{
                     Integer id = Integer.valueOf(input.getText());
-                    System.out.println(id);//todo tmp
 
                     if(checkId(id)) {
                         layout.show(dialog, "greeting");
@@ -197,6 +205,12 @@ public class Window implements View {
     }
 
     private boolean checkId(int id) {
+        try {
+            socketManager.checkId(id);
+        } catch (IOException e) {
+            e.printStackTrace();//todo------------------------
+        }
+
         return true;
     }
 }
