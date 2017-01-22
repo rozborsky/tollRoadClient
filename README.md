@@ -1,4 +1,4 @@
-Сlient part of the payment systems of toll roads network
+<h2>Сlient part of the payment systems of toll roads network</h2>
 <br/><br/>
 [![Build Status](https://travis-ci.org/rozborsky/tollRoadClient.svg?branch=master)](https://travis-ci.org/rozborsky/tollRoadClient)
 <br/><br/>
