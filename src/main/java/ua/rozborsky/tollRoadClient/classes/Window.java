@@ -23,7 +23,8 @@ public class Window implements View {
     private Font ERROR_FONT = new Font("Courier New", Font.BOLD, 100);
     private Color color = new Color(145,45,45);
     private int delay = 2;
-    SocketManager socketManager;
+    private SocketManager socketManager;
+    private JPanel mainPanel;
 
     @Override
     public void create() {
@@ -49,23 +50,21 @@ public class Window implements View {
     }
 
     private void setComponents(JFrame frame) {
-        JPanel panel = new JPanel(new CardLayout());
-        panel.add(normalWork(), "normalWork");
-        panel.add(error(), "error");
-
-        CardLayout layout = (CardLayout)(panel.getLayout());
+        mainPanel = new JPanel(new CardLayout());
+        mainPanel.add(normalWork(), "normalWork");
+        mainPanel.add(error(), "error");
 
         ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("spring/applicationConfig.xml");
-
         socketManager = (SocketManager) context.getBean("socketManager");
 
-        if (socketManager.isConnect()){
-            layout.show(panel, "normalWork");
+        CardLayout mainLayout = (CardLayout)(mainPanel.getLayout());
+        if (socketManager.connect()){
+            mainLayout.show(mainPanel, "normalWork");
         } else{
-            layout.show(panel, "error");
+            mainLayout.show(mainPanel, "error");
         }
 
-        frame.add(panel);
+        frame.add(mainPanel);
     }
 
     private JPanel normalWork() {
@@ -181,34 +180,36 @@ public class Window implements View {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                CardLayout layout = (CardLayout)(dialog.getLayout());
+            CardLayout layout = (CardLayout)(dialog.getLayout());
 
-                try{
-                    Integer id = Integer.valueOf(input.getText());
+            try{
+                Integer id = Integer.valueOf(input.getText());
 
-                    if(checkId(id)) {
-                        layout.show(dialog, "greeting");
-                    } else {
-                        layout.show(dialog, "notExistDriver");
-                    }
-                } catch (NumberFormatException ee) {
-                    layout.show(dialog, "notValidId");
+                if(accessAllowed(id)) {
+                    layout.show(dialog, "greeting");
+                } else {
+                    layout.show(dialog, "notExistDriver");
                 }
+            } catch (NumberFormatException ee) {
+                layout.show(dialog, "notValidId");
+            }
 
-                input.setText("");
-                Timer timer = new Timer();
-                timer.schedule(new UpdateInput(layout, dialog), delay * 1000);
+            input.setText("");
+            Timer timer = new Timer();
+            timer.schedule(new UpdateInput(layout, dialog), delay * 1000);
             }
         };
 
         return action;
     }
 
-    private boolean checkId(int id) {
+    private boolean accessAllowed(int id) {
         try {
-            socketManager.checkId(id);
+            return socketManager.checkId(id);
         } catch (IOException e) {
-            e.printStackTrace();//todo------------------------
+            CardLayout mainLayout = (CardLayout)(mainPanel.getLayout());
+            mainLayout.show(mainPanel, "error");
+            e.printStackTrace();//todo log4j------------------------------
         }
 
         return true;

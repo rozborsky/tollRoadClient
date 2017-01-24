@@ -11,32 +11,41 @@ import java.net.Socket;
 @Service("socketManager")
 public class SocketManager {
 
-    private Socket socket;
+    private static Socket socket;
     private String hostName = "localhost";
     private int portNumber = 4444;
 
-    public boolean isConnect() {
+    public boolean connect() {
         try {
             socket = new Socket(hostName, portNumber);
 
             return true;
         } catch (IOException e) {
-            e.printStackTrace();//todo-------------------------
+            e.printStackTrace();//todo log4j
 
             return false;
         }
     }
 
-    public void checkId(int id) throws IOException {
-        OutputStream out = socket.getOutputStream();;
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
+    public boolean checkId(int id) throws IOException {
+        sendId(id);
+        //throw new IOException();
+        return canRide();
+    }
 
-        try {
-            writer.write(id + "\n");
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();//todo---------------------------------------------
-        }
+    private void sendId(int id) throws IOException {
+        OutputStream out = socket.getOutputStream();
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
+        writer.write(id + "\n");
+        writer.flush();
+    }
+
+    private boolean canRide() throws IOException {
+        InputStream inputStream = socket.getInputStream();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        String line = bufferedReader.readLine();
+
+        return Boolean.valueOf(line);
     }
 
     public void setConnectingParameters(String hst, int prt) {
