@@ -10,43 +10,20 @@ import java.net.Socket;
  */
 @Service("socketManager")
 public class SocketManager {
-
-    private static Socket socket;
     private String hostName = "localhost";
     private int portNumber = 4444;
 
-    public boolean connect() {
-        try {
-            socket = new Socket(hostName, portNumber);
-
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();//todo log4j
-
-            return false;
-        }
-    }
 
     public boolean checkId(int id) throws IOException {
-        sendId(id);
-        //throw new IOException();
-        return canRide();
+        Socket socket = new Socket(hostName, portNumber);
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(id);
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        String isActive = in.readLine();
+
+        return Boolean.valueOf(isActive);
     }
 
-    private void sendId(int id) throws IOException {
-        OutputStream out = socket.getOutputStream();
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
-        writer.write(id + "\n");
-        writer.flush();
-    }
-
-    private boolean canRide() throws IOException {
-        InputStream inputStream = socket.getInputStream();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        String line = bufferedReader.readLine();
-
-        return Boolean.valueOf(line);
-    }
 
     public void setConnectingParameters(String hst, int prt) {
         this.hostName = hst;

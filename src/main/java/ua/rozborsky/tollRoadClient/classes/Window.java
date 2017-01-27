@@ -23,8 +23,9 @@ public class Window implements View {
     private Font ERROR_FONT = new Font("Courier New", Font.BOLD, 100);
     private Color color = new Color(145,45,45);
     private int delay = 2;
-    private SocketManager socketManager;
+    private static SocketManager socketManager;
     private JPanel mainPanel;
+
 
     @Override
     public void create() {
@@ -51,18 +52,11 @@ public class Window implements View {
 
     private void setComponents(JFrame frame) {
         mainPanel = new JPanel(new CardLayout());
-        mainPanel.add(normalWork(), "normalWork");
+        mainPanel.add(normalWork(), "work");
         mainPanel.add(error(), "error");
 
-        ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("spring/applicationConfig.xml");
-        socketManager = (SocketManager) context.getBean("socketManager");
-
         CardLayout mainLayout = (CardLayout)(mainPanel.getLayout());
-        if (socketManager.connect()){
-            mainLayout.show(mainPanel, "normalWork");
-        } else{
-            mainLayout.show(mainPanel, "error");
-        }
+        mainLayout.show(mainPanel, "work");
 
         frame.add(mainPanel);
     }
@@ -205,11 +199,15 @@ public class Window implements View {
 
     private boolean accessAllowed(int id) {
         try {
+            ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("spring/applicationConfig.xml");
+            socketManager = (SocketManager) context.getBean("socketManager");
+
             return socketManager.checkId(id);
         } catch (IOException e) {
             CardLayout mainLayout = (CardLayout)(mainPanel.getLayout());
             mainLayout.show(mainPanel, "error");
-            e.printStackTrace();//todo log4j------------------------------
+            System.out.println(id);e.printStackTrace();
+            //todo log4j--------------------e.printStackTrace();
         }
 
         return true;
