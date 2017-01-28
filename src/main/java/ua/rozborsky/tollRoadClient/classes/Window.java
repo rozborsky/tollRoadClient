@@ -1,5 +1,6 @@
 package ua.rozborsky.tollRoadClient.classes;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ import java.util.Timer;
  */
 @Service("window")
 public class Window implements View {
+    private static final Logger log = Logger.getLogger(Window.class);
+
     private JPanel dialog;
     private Font FONT = new Font("Courier New", Font.BOLD, 200);
     private Font ERROR_FONT = new Font("Courier New", Font.BOLD, 100);
@@ -205,8 +208,7 @@ public class Window implements View {
         } catch (IOException e) {
             CardLayout mainLayout = (CardLayout)(mainPanel.getLayout());
             mainLayout.show(mainPanel, "error");
-            System.out.println(id);e.printStackTrace();
-            //todo log4j--------------------e.printStackTrace();
+            log.error(e);
         }
 
         return true;
