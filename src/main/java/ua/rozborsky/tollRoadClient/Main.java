@@ -4,7 +4,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ua.rozborsky.tollRoadClient.interfaces.View;
 
-
 /**
  * Created by roman on 17.01.2017.
  */

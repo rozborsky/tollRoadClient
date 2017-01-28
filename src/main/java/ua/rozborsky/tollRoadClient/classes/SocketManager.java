@@ -10,23 +10,17 @@ import java.net.Socket;
  */
 @Service("socketManager")
 public class SocketManager {
-    private String hostName = "localhost";
-    private int portNumber = 4444;
-
 
     public boolean checkId(int id) throws IOException {
-        Socket socket = new Socket(hostName, portNumber);
+        String host = Properties.host();
+        int port = Integer.valueOf(Properties.port());
+        
+        Socket socket = new Socket(host, port);
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         out.println(id);
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String isActive = in.readLine();
 
         return Boolean.valueOf(isActive);
-    }
-
-
-    public void setConnectingParameters(String hst, int prt) {
-        this.hostName = hst;
-        this.portNumber = prt;
     }
 }

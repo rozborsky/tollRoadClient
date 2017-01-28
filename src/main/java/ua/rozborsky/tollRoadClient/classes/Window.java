@@ -21,8 +21,8 @@ public class Window implements View {
     private JPanel dialog;
     private Font FONT = new Font("Courier New", Font.BOLD, 200);
     private Font ERROR_FONT = new Font("Courier New", Font.BOLD, 100);
-    private Color color = new Color(145,45,45);
-    private int delay = 2;
+    private Color color = new Color(Properties.r(), Properties.g(), Properties.b());
+    private int delay = Properties.delay();
     private static SocketManager socketManager;
     private JPanel mainPanel;
 
@@ -76,8 +76,7 @@ public class Window implements View {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(color);
 
-        JLabel error = new JLabel("<html><div style='text-align: center;'>Sorry, service not available.<br/>" +
-                "Have a nice trip</div></html>");
+        JLabel error = new JLabel("<html><div style='text-align: center;'>" + Properties.systemError() + "</div></html>");
         error.setFont(ERROR_FONT);
         error.setForeground(Color.WHITE);
         panel.add(error);
@@ -86,7 +85,7 @@ public class Window implements View {
     }
 
     private JLabel image() {
-        File logo = new File("src\\main\\resources\\image\\5.png");
+        File logo = new File(Properties.pathToImage());
         String path = logo.getAbsolutePath();
         JLabel label = new JLabel(new ImageIcon(path));
 
@@ -97,7 +96,7 @@ public class Window implements View {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(color);
 
-        JLabel title = new JLabel("tollroad");
+        JLabel title = new JLabel(Properties.name());
         title.setFont(FONT);
         title.setForeground(Color.WHITE);
         panel.add(title, BorderLayout.NORTH);
@@ -137,7 +136,7 @@ public class Window implements View {
         JPanel panel = new JPanel();
         panel.setBackground(color);
 
-        JLabel error = new JLabel("not valid id");
+        JLabel error = new JLabel();
         error.setForeground(Color.white);
         error.setFont(FONT);
         panel.add(error);
@@ -149,7 +148,7 @@ public class Window implements View {
         JPanel panel = new JPanel();
         panel.setBackground(color);
 
-        JLabel error = new JLabel("Driver not exist");
+        JLabel error = new JLabel(Properties.error());
         error.setForeground(Color.white);
         error.setFont(FONT);
         panel.add(error);
@@ -161,7 +160,7 @@ public class Window implements View {
         JPanel panel = new JPanel();
         panel.setBackground(color);
 
-        JLabel greeting = new JLabel("Have a nice trip");
+        JLabel greeting = new JLabel(Properties.ok());
         greeting.setForeground(Color.white);
         greeting.setFont(FONT);
         panel.add(greeting);
