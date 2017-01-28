@@ -10,7 +10,7 @@ import java.io.InputStream;
  */
 public class Properties {
     private static java.util.Properties propertie;
-    private static final Logger log = Logger.getLogger(Window.class);
+    private static final Logger log = Logger.getLogger(Properties.class);
 
     static {
         String resourceName = "myconf.properties";
