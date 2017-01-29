@@ -24,6 +24,7 @@ public class Window implements View {
     private JPanel dialog;
     private Font FONT = new Font("Courier New", Font.BOLD, 200);
     private Font ERROR_FONT = new Font("Courier New", Font.BOLD, 100);
+    private Font TERMINAL_MARKER_FONT = new Font("Courier New", Font.BOLD, 50);
     private Color color = new Color(Properties.r(), Properties.g(), Properties.b());
     private int delay = Properties.delay();
     private static SocketManager socketManager;
@@ -125,12 +126,29 @@ public class Window implements View {
     private JPanel inputPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(color);
+        panel.add(terminalMarker(), BorderLayout.WEST);
+        panel.add(input(), BorderLayout.EAST);
 
+        return panel;
+    }
+
+    private JTextField input() {
         JTextField input = new JTextField(10);
         input.setFont(FONT);
         input.setDocument(new JTextFieldLimit());
         input.addActionListener(inputListener(input));
-        panel.add(input, BorderLayout.EAST);
+
+        return input;
+    }
+
+    private JPanel terminalMarker() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(color);
+
+        JLabel marker = new JLabel(Properties.terminalMarker());
+        marker.setFont(TERMINAL_MARKER_FONT);
+        marker.setForeground(Color.GREEN);
+        panel.add(marker, BorderLayout.SOUTH);
 
         return panel;
     }
@@ -139,7 +157,7 @@ public class Window implements View {
         JPanel panel = new JPanel();
         panel.setBackground(color);
 
-        JLabel error = new JLabel();
+        JLabel error = new JLabel(Properties.notValid());
         error.setForeground(Color.white);
         error.setFont(FONT);
         panel.add(error);
@@ -209,6 +227,7 @@ public class Window implements View {
             CardLayout mainLayout = (CardLayout)(mainPanel.getLayout());
             mainLayout.show(mainPanel, "error");
             log.error(e);
+            e.printStackTrace();
         }
 
         return true;

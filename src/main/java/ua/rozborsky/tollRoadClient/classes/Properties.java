@@ -70,4 +70,8 @@ public class Properties {
     public static String name() {
         return propertie.getProperty("name");
     }
+
+    public static String terminalMarker() {
+        return propertie.getProperty("terminalMarker");
+    }
 }
