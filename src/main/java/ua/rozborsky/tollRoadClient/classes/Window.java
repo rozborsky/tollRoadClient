@@ -8,6 +8,7 @@ import ua.rozborsky.tollRoadClient.interfaces.View;
 
 import javax.swing.*;
 import java.awt.*;
+
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -23,12 +24,14 @@ public class Window implements View {
 
     private JPanel dialog;
     private Font FONT = new Font("Courier New", Font.BOLD, 200);
-    private Font ERROR_FONT = new Font("Courier New", Font.BOLD, 100);
+    private Font MESSAGE_FONT = new Font("Courier New", Font.BOLD, 100);
     private Font TERMINAL_MARKER_FONT = new Font("Courier New", Font.BOLD, 50);
     private Color color = new Color(Properties.r(), Properties.g(), Properties.b());
     private int delay = Properties.delay();
     private static SocketManager socketManager;
     private JPanel mainPanel;
+    private String message;
+    private boolean canRide;
 
 
     @Override
@@ -81,7 +84,7 @@ public class Window implements View {
         panel.setBackground(color);
 
         JLabel error = new JLabel("<html><div style='text-align: center;'>" + Properties.systemError() + "</div></html>");
-        error.setFont(ERROR_FONT);
+        error.setFont(MESSAGE_FONT);
         error.setForeground(Color.WHITE);
         panel.add(error);
 
@@ -111,17 +114,24 @@ public class Window implements View {
     private JPanel dialogPanel() {
         dialog = new JPanel(new CardLayout());
         dialog.setBackground(color);
-
         dialog.add(inputPanel(), "input");
-        dialog.add(notValidId(), "notValidId");
-        dialog.add(greetingPanel(), "greeting");
-        dialog.add(notExistDriver(), "notExistDriver");
-
         CardLayout layout = (CardLayout)(dialog.getLayout());
         layout.show(dialog, "input");
 
         return dialog;
     }
+
+    private JPanel result() {
+        JPanel panel = new JPanel();
+        panel.setBackground(color);
+        JLabel error = new JLabel(message);
+        error.setForeground(Color.white);
+        error.setFont(MESSAGE_FONT);
+        panel.add(error);
+
+        return panel;
+    }
+
 
     private JPanel inputPanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -153,83 +163,45 @@ public class Window implements View {
         return panel;
     }
 
-    private JPanel notValidId() {
-        JPanel panel = new JPanel();
-        panel.setBackground(color);
-
-        JLabel error = new JLabel(Properties.notValid());
-        error.setForeground(Color.white);
-        error.setFont(FONT);
-        panel.add(error);
-
-        return panel;
-    }
-
-    private JPanel notExistDriver() {
-        JPanel panel = new JPanel();
-        panel.setBackground(color);
-
-        JLabel error = new JLabel(Properties.error());
-        error.setForeground(Color.white);
-        error.setFont(FONT);
-        panel.add(error);
-
-        return panel;
-    }
-
-    private JPanel greetingPanel() {
-        JPanel panel = new JPanel();
-        panel.setBackground(color);
-
-        JLabel greeting = new JLabel(Properties.ok());
-        greeting.setForeground(Color.white);
-        greeting.setFont(FONT);
-        panel.add(greeting);
-
-        return panel;
-    }
 
     private Action inputListener(final JTextField input) {
         Action action = new AbstractAction() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-            CardLayout layout = (CardLayout)(dialog.getLayout());
+            public void actionPerformed(ActionEvent e) {
+                CardLayout layout = (CardLayout)(dialog.getLayout());
 
-            try{
-                Integer id = Integer.valueOf(input.getText());
-
-                if(accessAllowed(id)) {
-                    layout.show(dialog, "greeting");
-                } else {
-                    layout.show(dialog, "notExistDriver");
+                try{
+                    Integer id = Integer.valueOf(input.getText());
+                    checkId(id);
+                    layout.show(dialog, "result");
+                    //System.out.println(canRide); do smth
+                } catch (NumberFormatException ee) {
+                    layout.show(dialog, "notValidId");
                 }
-            } catch (NumberFormatException ee) {
-                layout.show(dialog, "notValidId");
-            }
 
-            input.setText("");
-            Timer timer = new Timer();
-            timer.schedule(new UpdateInput(layout, dialog), delay * 1000);
+                input.setText("");
+                Timer timer = new Timer();
+                timer.schedule(new UpdateInput(layout, dialog), delay * 1000);
             }
         };
 
         return action;
     }
 
-    private boolean accessAllowed(int id) {
+    private void checkId(int id) {
         try {
             ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("spring/applicationConfig.xml");
             socketManager = (SocketManager) context.getBean("socketManager");
+            socketManager.checkId(id);
 
-            return socketManager.checkId(id);
-        } catch (IOException e) {
+            message = socketManager.getMessage();
+            canRide = socketManager.isCanRide();
+            dialog.add(result(), "result");
+        } catch (IOException | ClassNotFoundException e) {
             CardLayout mainLayout = (CardLayout)(mainPanel.getLayout());
             mainLayout.show(mainPanel, "error");
             log.error(e);
-            e.printStackTrace();
+            e.printStackTrace();//todo----------------------replace
         }
-
-        return true;
     }
 }

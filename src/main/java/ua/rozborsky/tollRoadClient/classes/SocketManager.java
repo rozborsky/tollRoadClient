@@ -3,6 +3,7 @@ package ua.rozborsky.tollRoadClient.classes;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
+import ua.rozborsky.transmittedObjects.AnswerFromServer;
 import ua.rozborsky.transmittedObjects.Client;
 import ua.rozborsky.transmittedObjects.RequestFromClient;
 
@@ -14,8 +15,10 @@ import java.net.Socket;
  */
 @Service("socketManager")
 public class SocketManager {
+    private boolean canRide;
+    private String message;
 
-    public boolean checkId(int id) throws IOException {
+    public void checkId(int id) throws IOException,  ClassNotFoundException{
         String host = Properties.host();
         int port = Integer.valueOf(Properties.port());
         
@@ -29,9 +32,18 @@ public class SocketManager {
         out.writeObject(requestFromClient);
         out.flush();
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        String isActive = in.readLine();
+        ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
 
-        return Boolean.valueOf(isActive);
+        AnswerFromServer answerFromServer = (AnswerFromServer)inStream.readObject();
+        this.canRide = answerFromServer.canRide();
+        this.message = answerFromServer.message();
+    }
+
+    public boolean isCanRide() {
+        return canRide;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

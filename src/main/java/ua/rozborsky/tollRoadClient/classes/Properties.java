@@ -55,18 +55,6 @@ public class Properties {
         return propertie.getProperty("systemEror");
     }
 
-    public static String ok() {
-        return propertie.getProperty("ok");
-    }
-
-    public static String error() {
-        return propertie.getProperty("error");
-    }
-
-    public static String notValid() {
-        return propertie.getProperty("notValid");
-    }
-
     public static String name() {
         return propertie.getProperty("name");
     }
