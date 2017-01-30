@@ -27,7 +27,7 @@ public class SocketManager {
 
         ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("spring/applicationConfig.xml");
         RequestFromClient requestFromClient = (RequestFromClient) context.getBean("requestFromClient");
-        requestFromClient.setValues(Client.valueOf(Properties.terminalMarker()), id);
+        requestFromClient.setValues(Properties.checkPoint(), Client.valueOf(Properties.terminalMarker()), id);
 
         out.writeObject(requestFromClient);
         out.flush();

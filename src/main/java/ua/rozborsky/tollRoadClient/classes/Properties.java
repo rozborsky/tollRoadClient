@@ -46,6 +46,9 @@ public class Properties {
     public static int delay() {
         return Integer.valueOf(propertie.getProperty("delay"));
     }
+    public static int checkPoint() {
+        return Integer.valueOf(propertie.getProperty("checkPoint"));
+    }
 
     public static String pathToImage() {
         return propertie.getProperty("pathToImage");
